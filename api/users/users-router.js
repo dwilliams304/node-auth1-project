@@ -1,5 +1,7 @@
 // Require the `restricted` middleware from `auth-middleware.js`. You will need it here!
 const router = require('express').Router();
+const { restricted } = require('../auth/auth-middleware');
+const User = require('./users-model');
 
 /**
   [GET] /api/users
@@ -23,8 +25,12 @@ const router = require('express').Router();
     "message": "You shall not pass!"
   }
  */
-router.get('/', (req, res, next) => {
-  res.json('users')
+router.get('/', restricted, async (req, res, next) => {
+  try{
+    const users = await User.find();
+    res.json(users);
+  }
+  catch(err) { next(err); }
 })
 
 
